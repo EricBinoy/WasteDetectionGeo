@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Backend runtime
+backend/uploads/*
+!backend/uploads/.gitkeep
+.env
+
+# Node / Next.js
+node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env
+frontend/.env.local
+
+# Editors / OS
+.DS_Store
+.vscode/
+.idea/
