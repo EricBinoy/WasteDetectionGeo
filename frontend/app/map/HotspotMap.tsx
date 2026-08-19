@@ -42,7 +42,9 @@ export default function HotspotMap() {
 
   return (
     <div>
-      {error && <p className="text-red-600 mb-2 text-sm">{error}</p>}
+      {error && (
+        <p className="border-b border-[#ee5253]/30 bg-[#ee5253]/[0.08] px-5 py-3 text-sm text-[#ff8a8c]">{error}</p>
+      )}
       <MapContainer center={MUMBAI_CENTER} zoom={12} style={{ height: "70vh", width: "100%" }}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -60,11 +62,12 @@ export default function HotspotMap() {
             }}
           >
             <Popup>
-              <div className="text-sm">
-                <p>Reports: {f.properties.report_count}</p>
-                <p>Avg severity: {f.properties.avg_severity?.toFixed(1) ?? "n/a"}</p>
-                <p>Priority score: {f.properties.priority_score?.toFixed(1) ?? "n/a"}</p>
-                <p>Last seen: {f.properties.last_seen ? new Date(f.properties.last_seen).toLocaleString() : "n/a"}</p>
+              <div className="min-w-[160px] font-sans text-sm">
+                <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.12em] text-dim">Hotspot</p>
+                <p>Reports: <span className="text-fg">{f.properties.report_count}</span></p>
+                <p>Avg severity: <span className="text-fg">{f.properties.avg_severity?.toFixed(1) ?? "n/a"}</span></p>
+                <p>Priority score: <span className="text-fg">{f.properties.priority_score?.toFixed(1) ?? "n/a"}</span></p>
+                <p>Last seen: <span className="text-fg">{f.properties.last_seen ? new Date(f.properties.last_seen).toLocaleString() : "n/a"}</span></p>
               </div>
             </Popup>
           </CircleMarker>

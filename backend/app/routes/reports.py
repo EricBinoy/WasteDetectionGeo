@@ -3,11 +3,11 @@ import os
 import uuid
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
-from sqlalchemy import text
+from geoalchemy2.elements import WKTElement
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.cv_pipeline import classify_image
+from app.cv_pipeline import MODEL_VERSION, classify_image
 from app.db import get_db
 from app.dedup import compute_phash, is_near_duplicate
 from app.geo import hotspots_as_geojson, upsert_hotspot
@@ -51,15 +51,12 @@ async def create_report(
         image_phash=phash,
         latitude=latitude,
         longitude=longitude,
+        geom=WKTElement(f"POINT({longitude} {latitude})", srid=4326),
         ip_hash=ip_hash,
         status="pending",
     )
     db.add(report)
     db.flush()
-    db.execute(
-        text("UPDATE reports SET geom = ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography WHERE id = :id"),
-        {"lng": longitude, "lat": latitude, "id": report.id},
-    )
 
     classification = classify_image(stored_path)
 
@@ -68,7 +65,7 @@ async def create_report(
         db.add(
             Detection(
                 report_id=report.id,
-                model_version="nonamelife/garbage-detection-model",
+                model_version=MODEL_VERSION,
                 is_waste=classification.is_waste,
                 confidence=classification.confidence,
                 severity_score=0.0,

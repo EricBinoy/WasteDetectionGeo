@@ -94,85 +94,112 @@ export default function UploadPage() {
   }
 
   return (
-    <main className="max-w-md mx-auto p-6">
-      <h1 className="text-xl font-bold mb-4">Report Illegally Dumped Waste</h1>
-      <p className="text-sm text-gray-600 mb-6">
-        Upload a photo and your location. Reports are anonymous — no account needed.
-      </p>
-
-      <form onSubmit={onSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Photo</label>
-          <input type="file" accept="image/*" capture="environment" onChange={onFileChange} className="block w-full" />
-          {preview && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={preview} alt="preview" className="mt-2 max-h-64 rounded border object-cover" />
-          )}
+    <main className="mx-auto max-w-6xl px-5 py-14 sm:py-20">
+      <div className="grid items-start gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16 xl:grid-cols-[1fr_600px]">
+        <div className="text-center lg:sticky lg:top-28 lg:text-left">
+          <p className="kicker-left mb-6">
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan shadow-[0_0_0_4px_rgba(10,189,227,0.16)]" />
+            Civic Reporting
+          </p>
+          <h1 className="font-serif text-4xl font-medium leading-tight text-fg sm:text-5xl lg:text-6xl">
+            Report <em className="font-medium italic text-gold">dumped</em> waste
+          </h1>
+          <p className="mx-auto mt-5 max-w-md text-[15px] leading-relaxed text-muted lg:mx-0">
+            Upload a photo and your location. An AI model verifies it before it's added to the map —
+            fully anonymous, no account needed.
+          </p>
         </div>
 
         <div>
-          <button
-            type="button"
-            onClick={useMyLocation}
-            disabled={locating}
-            className="w-full rounded bg-blue-600 text-white py-2 disabled:opacity-50"
+      <form onSubmit={onSubmit} className="card space-y-6">
+        <div>
+          <label className="field-label">Photo</label>
+          <label
+            htmlFor="photo-input"
+            className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-line2 bg-white/[0.02] px-4 py-8 text-center transition-colors hover:border-gold/60"
           >
-            {locating ? "Getting location…" : "Use My Location"}
-          </button>
+            {preview ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={preview} alt="preview" className="max-h-56 rounded-xl border border-line object-cover" />
+            ) : (
+              <>
+                <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-dim">Tap to choose or take a photo</span>
+                <span className="text-2xl">📷</span>
+              </>
+            )}
+          </label>
+          <input
+            id="photo-input"
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={onFileChange}
+            className="hidden"
+          />
         </div>
+
+        <button type="button" onClick={useMyLocation} disabled={locating} className="btn-cyan w-full">
+          {locating ? "Getting location…" : "Use My Location"}
+        </button>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium mb-1">Latitude</label>
+            <label className="field-label">Latitude</label>
             <input
               type="number"
               step="any"
               value={lat}
               onChange={(e) => setLat(e.target.value)}
-              className="w-full border rounded px-2 py-1"
+              className="field-input"
               placeholder="19.0760"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Longitude</label>
+            <label className="field-label">Longitude</label>
             <input
               type="number"
               step="any"
               value={lng}
               onChange={(e) => setLng(e.target.value)}
-              className="w-full border rounded px-2 py-1"
+              className="field-input"
               placeholder="72.8777"
             />
           </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded bg-green-600 text-white py-2 font-semibold disabled:opacity-50"
-        >
+        <button type="submit" disabled={submitting} className="btn-gold w-full">
           {submitting ? "Submitting…" : "Submit Report"}
         </button>
       </form>
 
-      {error && <p className="mt-4 text-red-600 text-sm">{error}</p>}
+      {error && (
+        <div className="mt-5 rounded-2xl border border-[#ee5253]/40 bg-[#ee5253]/[0.08] px-5 py-4 text-sm text-[#ff8a8c]">
+          {error}
+        </div>
+      )}
 
       {result && result.status === "accepted" && (
-        <div className="mt-4 p-3 rounded bg-green-50 border border-green-200 text-sm">
-          <p className="font-medium text-green-800">Report accepted — thank you!</p>
-          <p>Confidence: {(result.confidence! * 100).toFixed(0)}%</p>
-          <p>Hotspot priority score: {result.priority_score?.toFixed(1)}</p>
+        <div className="mt-5 rounded-2xl border border-[#1dd1a1]/40 bg-[#1dd1a1]/[0.08] px-5 py-4">
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#1dd1a1]">Report accepted — thank you</p>
+          <div className="mt-3 space-y-1 text-sm text-muted">
+            <p>Confidence: <span className="text-fg">{(result.confidence! * 100).toFixed(0)}%</span></p>
+            <p>Hotspot priority score: <span className="text-fg">{result.priority_score?.toFixed(1)}</span></p>
+          </div>
         </div>
       )}
 
       {result && result.status === "rejected" && (
-        <div className="mt-4 p-3 rounded bg-yellow-50 border border-yellow-200 text-sm">
-          <p className="font-medium text-yellow-800">Report not accepted.</p>
-          <p>
-            Reason: {result.reason === "duplicate" ? "This looks like a duplicate of a recent nearby report." : "No waste detected in the photo."}
+        <div className="mt-5 rounded-2xl border border-gold/40 bg-gold/[0.08] px-5 py-4">
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-gold">Report not accepted</p>
+          <p className="mt-3 text-sm text-muted">
+            {result.reason === "duplicate"
+              ? "This looks like a duplicate of a recent nearby report."
+              : "No waste detected in the photo."}
           </p>
         </div>
       )}
+        </div>
+      </div>
     </main>
   );
 }

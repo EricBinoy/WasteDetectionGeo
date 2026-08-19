@@ -1,5 +1,9 @@
 services:
+  # Local Postgres+PostGIS, only started when the "local" profile is active
+  # (`docker compose --profile local up -d`). Skip it entirely to use Supabase
+  # (or whatever DATABASE_URL is set in .env) instead.
   db:
+    profiles: ["local"]
     image: postgis/postgis:16-3.4
     environment:
       POSTGRES_USER: postgres
@@ -18,17 +22,20 @@ services:
   backend:
     build: ./backend
     ports:
-      - "8000:8000"
+      - "8001:8000"
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/wastedetection
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@db:5432/wastedetection}
       CORS_ORIGIN: http://localhost:3000
       UPLOAD_DIR: uploads
-      PUBLIC_BASE_URL: http://localhost:8000
+      PUBLIC_BASE_URL: http://localhost:8001
     volumes:
       - ./backend/uploads:/app/uploads
+      - hf_cache:/root/.cache/huggingface
     depends_on:
       db:
         condition: service_healthy
+        required: false
 
 volumes:
   db_data:
+  hf_cache:

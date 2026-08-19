@@ -1,3 +1,72 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #05070c;
+  }
+}
+
+@layer components {
+  .kicker {
+    @apply flex items-center justify-center gap-3 font-mono text-[11px] uppercase tracking-[0.28em] text-dim;
+  }
+  .kicker::before,
+  .kicker::after {
+    content: "";
+    width: 34px;
+    height: 1px;
+    background: theme("colors.line2");
+  }
+  .kicker-left {
+    @apply flex items-center justify-center gap-3 font-mono text-[11px] uppercase tracking-[0.28em] text-dim lg:justify-start;
+  }
+  .kicker-left::after {
+    content: "";
+    width: 34px;
+    height: 1px;
+    background: theme("colors.line2");
+  }
+  .btn-gold {
+    @apply relative inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-br from-gold to-[#e9d27a] px-8 py-3.5 font-sans text-[15.5px] font-bold text-ink shadow-[0_14px_30px_-12px_rgba(212,175,55,0.55)] transition-all hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-12px_rgba(212,175,55,0.7)] disabled:pointer-events-none disabled:opacity-50 disabled:hover:translate-y-0;
+  }
+  .btn-cyan {
+    @apply relative inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-br from-cyan to-[#7fe3f5] px-6 py-3 font-sans text-sm font-bold text-ink shadow-[0_10px_24px_-10px_rgba(10,189,227,0.55)] transition-all hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-50 disabled:hover:translate-y-0;
+  }
+  .field-input {
+    @apply w-full rounded-2xl border border-line2 bg-white/[0.03] px-4 py-3 font-sans text-fg outline-none transition-all placeholder:text-dim focus:border-gold focus:bg-white/[0.05] focus:shadow-[0_0_0_4px_rgba(212,175,55,0.14)];
+  }
+  .field-label {
+    @apply mb-2 block font-mono text-[11px] uppercase tracking-[0.14em] text-muted;
+  }
+  .card {
+    @apply rounded-3xl border border-line bg-white/[0.02] p-6 sm:p-8;
+  }
+}
+
+/* Dark-theme overrides for Leaflet's own markup (outside Tailwind's component scope) */
+.leaflet-container {
+  background: #05070c;
+  font-family: var(--font-space-grotesk), sans-serif;
+}
+.leaflet-popup-content-wrapper {
+  background: #0b0f1a;
+  color: #ecf1fa;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 196, 0.3);
+}
+.leaflet-popup-tip {
+  background: #0b0f1a;
+}
+.leaflet-popup-close-button {
+  color: #8b9ab6 !important;
+}
+.leaflet-bar a {
+  background: #0b0f1a !important;
+  color: #ecf1fa !important;
+  border-color: rgba(148, 163, 196, 0.3) !important;
+}
+.leaflet-bar a:hover {
+  background: #14192a !important;
+}
